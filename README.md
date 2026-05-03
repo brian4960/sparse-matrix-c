@@ -244,7 +244,3 @@ docs/runtime-analysis.md
 - Modular project organization
 - Algorithm analysis
 - Memory management with Valgrind
-
-## Notes
-
-This project was developed as part of a data structures and algorithms course and reorganized into a cleaner GitHub project structure. The implementation emphasizes modularity, sparse data representation, manual memory management, and runtime efficiency.
