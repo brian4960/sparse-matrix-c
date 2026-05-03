@@ -420,15 +420,21 @@ double vectorDot(List P, List Q) {
     
     double result = 0;
 
-    for (moveFront(P); position(P) > -1; moveNext(P)) {
+    moveFront(P);
+    moveFront(Q);
+
+    while (position(P) > -1 && position(Q) > -1) {
         Entry EP = (Entry) get(P);
+        Entry EQ = (Entry) get(Q);
 
-        for (moveFront(Q); position(Q) > -1; moveNext(Q)) {
-            Entry EQ = (Entry) get(Q);
-
-            if (EP->column == EQ->column) {
-                result += (EP->value * EQ->value);
-            }
+        if (EP->column == EQ->column) {
+            result += (EP->value * EQ->value);
+            moveNext(P);
+            moveNext(Q);
+        } else if (EP->column < EQ->column) {
+            moveNext(P);
+        } else {
+            moveNext(Q);
         }
     }
 

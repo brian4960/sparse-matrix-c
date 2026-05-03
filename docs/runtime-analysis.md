@@ -40,7 +40,7 @@ Each stored entry contains a (column, value) pair. Rows are kept sorted by colum
 | scalarMult(x, A) | Θ(n + a) | Multiplies each stored value by x |
 | sum(A, B) | Θ(n + a + b) | Merges corresponding sorted rows |
 | diff(A, B) | Θ(n + a + b) | Merges corresponding sorted rows and subtracts |
-| vectorDot(P, Q) | Θ(pq) | Scans two sorted sparse rows once |
+| vectorDot(P, Q) | Θ(p + q) | Scans two sorted sparse rows once using two cursors |
 | product(A, B) | Θ(n² + ab) | Uses sparse dot products after transposing B |
 | printMatrix(out, M) | Θ(n + a) | Checks rows and prints stored entries |
 
@@ -64,13 +64,25 @@ For sum(A, B) and diff(A, B), corresponding rows from A and B are merged. Since 
 
 ### Sparse Dot Product
 
-vectorDot(P, Q) computes the dot product of two sparse rows. Since both rows are sorted, the function scans through both rows once. If the row lengths are p and q, the runtime is Θ(pq).
+vectorDot(P, Q) computes the dot product of two sparse rows. Since both rows are sorted by column number, the function can scan through both rows once using two cursors.
+
+If the row lengths are p and q, the runtime is Θ(p + q).
+
+The key idea is that the function compares the current column in each row:
+
+- If the columns match, it multiplies the values and advances both cursors.
+- If the column in P is smaller, it advances P.
+- If the column in Q is smaller, it advances Q.
+
+Because each cursor only moves forward, each entry is visited at most once.
 
 ### Matrix Multiplication
 
 Dense matrix multiplication usually takes Θ(n³) because there are n² output entries, and each output entry requires a length-n dot product.
 
-This project uses sparse multiplication. It transposes B first, then computes dot products between rows of A and rows of transpose(B). The target runtime is Θ(n² + ab), where a and b are the numbers of nonzero entries in the input matrices.
+This project uses sparse multiplication. It transposes B first, then computes dot products between rows of A and rows of transpose(B). The optimized vectorDot function scans each row pair in linear time relative to the two row lengths.
+
+The project-level target runtime is Θ(n² + ab), where a and b are the numbers of nonzero entries in the input matrices. This reflects sparse multiplication in terms of possible output positions and nonzero-entry interactions.
 
 When a and b are much smaller than n², sparse multiplication can be more efficient than dense multiplication.
 
@@ -78,6 +90,7 @@ When a and b are much smaller than n², sparse multiplication can be more effici
 
 - Sparse matrices store only nonzero entries.
 - Missing entries are treated as zero.
-- Sorted row Lists allow efficient merging and dot products.
+- Sorted row Lists allow efficient merging and dot-product logic.
 - Many operations depend on the number of nonzero entries instead of all n² possible entries.
+- The optimized vectorDot implementation scans two sparse rows using two cursors, giving Θ(p + q) for rows of lengths p and q.
 - This project demonstrates how data structure design directly affects algorithm efficiency.
