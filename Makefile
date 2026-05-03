@@ -1,55 +1,51 @@
 #------------------------------------------------------------------------------
-# make                   makes Sparse
-# make MatrixTest        makes MatrixTest
-# make clean             removes all binaries and object files
-# make checkSparse       runs Sparse under valgrind on INFILE to OUTFILE
+# Makefile for Sparse Matrix Arithmetic in C
+#
+# make                   builds Sparse
+# make MatrixTest        builds MatrixTest
+# make clean             removes binaries and object files
+# make checkSparse       runs Sparse under valgrind
 # make checkMatrixTest   runs MatrixTest under valgrind
 #------------------------------------------------------------------------------
 
-MAIN           = Sparse
-MAINOBJ        = $(MAIN).o
-MAINSRC        = $(MAIN).c
-TEST           = MatrixTest
-TESTOBJ        = $(TEST).o
-TESTSRC        = $(TEST).c
-ADT1           = Matrix
-ADT1OBJ        = $(ADT1).o
-ADT1SRC        = $(ADT1).c
-ADT1_H         = $(ADT1).h
-ADT2           = List
-ADT2OBJ        = $(ADT2).o
-ADT2SRC        = $(ADT2).c
-ADT2_H         = $(ADT2).h
-COMPILE        = gcc -std=c17 -Wall -c
-LINK           = gcc -std=c17 -Wall -o
-REMOVE         = rm -f
-MEMCHECK       = valgrind --leak-check=full
-INFILE         = in4
-OUTFILE        = myout4
+CC       = gcc
+CFLAGS   = -std=c17 -Wall -Iinclude
+REMOVE   = rm -f
+MEMCHECK = valgrind --leak-check=full
 
-$(MAIN) : $(MAINOBJ) $(ADT1OBJ) $(ADT2OBJ)
-	$(LINK) $(MAIN) $(MAINOBJ) $(ADT1OBJ) $(ADT2OBJ)
+MAIN     = Sparse
+TEST     = MatrixTest
 
-$(MAINOBJ) : $(ADT1_H) $(ADT2_H) $(MAINSRC)
-	$(COMPILE) $(MAINSRC)
+INFILE   = examples/example1_input.txt
+OUTFILE  = myout.txt
 
-$(TEST) : $(TESTOBJ) $(ADT1OBJ) $(ADT2OBJ)
-	$(LINK) $(TEST) $(TESTOBJ) $(ADT1OBJ) $(ADT2OBJ)
+MAINOBJ  = src/Sparse.o
+TESTOBJ  = tests/MatrixTest.o
+OBJS     = src/Matrix.o src/List.o
 
-$(TESTOBJ) : $(ADT1_H) $(ADT2_H) $(TESTSRC)
-	$(COMPILE) $(TESTSRC)
+$(MAIN): $(MAINOBJ) $(OBJS)
+	$(CC) $(CFLAGS) -o $(MAIN) $(MAINOBJ) $(OBJS)
 
-$(ADT1OBJ) : $(ADT1_H) $(ADT2_H) $(ADT1SRC)
-	$(COMPILE) $(ADT1SRC)
+$(TEST): $(TESTOBJ) $(OBJS)
+	$(CC) $(CFLAGS) -o $(TEST) $(TESTOBJ) $(OBJS)
 
-$(ADT2OBJ) : $(ADT2_H) $(ADT2SRC)
-	$(COMPILE) $(ADT2SRC)
+src/Sparse.o: src/Sparse.c include/Matrix.h include/List.h
+	$(CC) $(CFLAGS) -c src/Sparse.c -o src/Sparse.o
 
-clean :
-	$(REMOVE) $(MAIN) $(MAINOBJ) $(TEST) $(TESTOBJ) $(ADT1OBJ) $(ADT2OBJ)
+src/Matrix.o: src/Matrix.c include/Matrix.h include/List.h
+	$(CC) $(CFLAGS) -c src/Matrix.c -o src/Matrix.o
 
-check$(MAIN) : $(MAIN)
+src/List.o: src/List.c include/List.h
+	$(CC) $(CFLAGS) -c src/List.c -o src/List.o
+
+tests/MatrixTest.o: tests/MatrixTest.c include/Matrix.h include/List.h
+	$(CC) $(CFLAGS) -c tests/MatrixTest.c -o tests/MatrixTest.o
+
+clean:
+	$(REMOVE) $(MAIN) $(TEST) src/*.o tests/*.o myout.txt
+
+checkSparse: $(MAIN)
 	$(MEMCHECK) ./$(MAIN) $(INFILE) $(OUTFILE)
 
-check$(TEST) : $(TEST)
+checkMatrixTest: $(TEST)
 	$(MEMCHECK) ./$(TEST)
