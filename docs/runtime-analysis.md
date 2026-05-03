@@ -40,7 +40,7 @@ Each stored entry contains a (column, value) pair. Rows are kept sorted by colum
 | scalarMult(x, A) | Θ(n + a) | Multiplies each stored value by x |
 | sum(A, B) | Θ(n + a + b) | Merges corresponding sorted rows |
 | diff(A, B) | Θ(n + a + b) | Merges corresponding sorted rows and subtracts |
-| vectorDot(P, Q) | Θ(p + q) | Scans two sorted sparse rows once |
+| vectorDot(P, Q) | Θ(pq) | Scans two sorted sparse rows once |
 | product(A, B) | Θ(n² + ab) | Uses sparse dot products after transposing B |
 | printMatrix(out, M) | Θ(n + a) | Checks rows and prints stored entries |
 
