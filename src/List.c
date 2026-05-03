@@ -515,34 +515,6 @@ void delete(List L) {
 
 // Other operations -----------------------------------------------------------
 
-// printList()
-// Prints a string representation of L consisting of a comma separated sequence
-// of integers, surrounded by parentheses, with front on left, to the stream
-// pointed to by out.
-void printList(FILE* out, List L) {
-    if (L == NULL) {
-        fprintf(stderr, "List Error: printList(): NULL List reference\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (out == NULL) {
-        fprintf(stderr, "List Error: printList(): NULL file reference\n");
-        exit(EXIT_FAILURE);
-    }
-
-    Node* curr_node = L->front;
-
-    fprintf(out, "(");
-    while (curr_node != NULL) {
-        fprintf(out, FORMAT, curr_node->data);
-        if (curr_node->next != NULL) {
-            fprintf(out, ", ");
-        }
-        curr_node = curr_node->next;
-    }
-    fprintf(out, ")");
-}
-
 // join()
 // Returns the concatenation of A followed by B. The cursor in the new List is
 // undefined, regardless of the states of the cursors A in and B. The states of
