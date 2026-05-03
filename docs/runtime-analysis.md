@@ -64,7 +64,7 @@ For sum(A, B) and diff(A, B), corresponding rows from A and B are merged. Since 
 
 ### Sparse Dot Product
 
-vectorDot(P, Q) computes the dot product of two sparse rows. Since both rows are sorted, the function scans through both rows once. If the row lengths are p and q, the runtime is Θ(p + q).
+vectorDot(P, Q) computes the dot product of two sparse rows. Since both rows are sorted, the function scans through both rows once. If the row lengths are p and q, the runtime is Θ(pq).
 
 ### Matrix Multiplication
 
